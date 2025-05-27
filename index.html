@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Humming Tale: Indian Bakery Market Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #073B4C;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                 max-height: 450px;
+            }
+        }
+        .hero-bg {
+            background-color: #118AB2;
+        }
+        .stat-value {
+            color: #FF6B6B;
+        }
+        .section-title {
+            color: #073B4C;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card.clickable-card:hover, .flowchart-step.clickable-flowchart-step:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+        .card.clickable-card:hover {  border-left-width: 4px; }
+        .flowchart-step.clickable-flowchart-step:hover { border-left-width: 7px; }
+
+
+        .icon-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .icon-list span.icon {
+            margin-right: 0.75rem;
+            color: #FF6B6B;
+            font-size: 1.5rem;
+        }
+        .flowchart-step {
+            background-color: #E0F2FE;
+            border-left: 5px solid #118AB2;
+            transition: border-left-width 0.3s ease;
+        }
+        .flowchart-arrow {
+            color: #118AB2;
+            font-size: 2rem;
+            line-height: 1;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #FF6B6B;
+            border-bottom: 2px solid #FF6B6B;
+        }
+        h1, h2, h3 {
+             color: #073B4C;
+        }
+        .text-coral-red { color: #FF6B6B; }
+        .bg-coral-red { background-color: #FF6B6B; }
+        .text-sunglow-yellow { color: #FFD166; }
+        .bg-sunglow-yellow { background-color: #FFD166; }
+        .text-caribbean-green { color: #06D6A0; }
+        .bg-caribbean-green { background-color: #06D6A0; }
+        .text-blue-ncs { color: #118AB2; }
+        .bg-blue-ncs { background-color: #118AB2; }
+        .text-midnight-green { color: #073B4C; }
+        .bg-midnight-green { background-color: #073B4C; }
+
+        #marketSizeChartContainer { height: 350px; max-height: 400px; }
+        @media (max-width: 768px) { #marketSizeChartContainer { height: 300px; max-height: 350px; } }
+        #healthTrendChartContainer { height: 300px; max-height: 350px; }
+        #digitalDisruptionChartContainer { height: 300px; max-height: 350px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding-top: 30px;
+        }
+        .modal-content {
+            background-color: #FFFFFF;
+            margin: 3% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+         .modal-body {
+            max-height: 75vh;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        .modal-body h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #118AB2;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+         .modal-body ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #073B4C;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF6B6B;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .gemini-button {
+            background-color: #FF6B6B;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.75rem;
+        }
+        .gemini-button:hover {
+            background-color: #e05252;
+        }
+        .swot-section h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        .swot-section ul {
+            list-style-type: square;
+            padding-left: 1.25rem;
+        }
+        .swot-section li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="sticky-nav shadow-md py-3 px-4 md:px-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <h2 class="text-xl font-bold text-midnight-green">The Humming Tale's Market Insights</h2>
+            <div class="hidden md:flex space-x-6">
+                <a href="#marketOverview" class="nav-link font-semibold">Market Overview</a>
+                <a href="#consumerTrends" class="nav-link font-semibold">Consumer Trends</a>
+                <a href="#successStories" class="nav-link font-semibold">Success Stories</a>
+                <a href="#roadmap" class="nav-link font-semibold">Roadmap</a>
+                <a href="#funding" class="nav-link font-semibold">Funding</a>
+            </div>
+            <button id="mobileMenuButton" class="md:hidden text-midnight-green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden mt-3 space-y-2">
+            <a href="#marketOverview" class="block nav-link font-semibold px-3 py-2">Market Overview</a>
+            <a href="#consumerTrends" class="block nav-link font-semibold px-3 py-2">Consumer Trends</a>
+            <a href="#successStories" class="block nav-link font-semibold px-3 py-2">Success Stories</a>
+            <a href="#roadmap" class="block nav-link font-semibold px-3 py-2">Roadmap</a>
+            <a href="#funding" class="block nav-link font-semibold px-3 py-2">Funding</a>
+        </div>
+    </nav>
+
+    <header class="hero-bg text-white py-16 md:py-24 px-4">
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">The Humming Tale</h1>
+            <p class="text-xl md:text-2xl mb-8">Navigating the Rise of India's Dynamic Bakery Market</p>
+            <div class="text-5xl md:text-7xl font-bold stat-value animate-pulse">
+                USD <span id="currentMarketSizeHero">13.8</span> Billion
+            </div>
+            <p class="text-lg md:text-xl mt-2">Current Indian Bakery Market Size (2024)</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="marketOverview" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">The Booming Indian Bakery Market</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                The Indian bakery sector is experiencing robust growth, driven by evolving consumer preferences, urbanization, and rising disposable incomes. This presents significant opportunities for innovative ventures like The Humming Tale.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-3 text-midnight-green">Market Growth Trajectory</h3>
+                    <p class="mb-4 text-gray-700">The market is projected for substantial expansion, indicating a vibrant future for the bakery industry in India. From USD 13.8 Billion in 2024, it's expected to reach USD 31.5 Billion by 2033.</p>
+                    <div id="marketSizeChartContainer" class="chart-container mx-auto max-w-lg">
+                        <canvas id="marketSizeChart"></canvas>
+                    </div>
+                     <p class="text-sm text-gray-600 mt-2 text-center">Projected Growth (CAGR: 9.12%)</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-midnight-green">Key Growth Catalysts</h3>
+                    <ul class="icon-list text-gray-700">
+                        <li><span class="icon">📈</span> Growing Population & Urbanization</li>
+                        <li><span class="icon">🌍</span> Changing Preferences & Western Influence</li>
+                        <li><span class="icon">💰</span> Rising Disposable Income</li>
+                        <li><span class="icon">⏱️</span> Hectic Lifestyles & Demand for Convenience</li>
+                        <li><span class="icon">🛒</span> Expansion of Retail & E-commerce</li>
+                        <li><span class="icon">🍽️</span> Growth of Food Service Sector (QSRs, Cafes)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="consumerTrends" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">What's Baking? Key Consumer Trends</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                Several powerful trends are reshaping the Indian bakery market, influencing product development, marketing strategies, and business models. Understanding these is crucial for The Humming Tale.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-midnight-green">🌿 The Health & Wellness Wave</h3>
+                    <p class="mb-4 text-gray-700">Consumers are actively seeking healthier options: low trans-fat, multi-grain, high-protein, organic, gluten-free, and vegan products are in demand.</p>
+                    <div id="healthTrendChartContainer" class="chart-container mx-auto max-w-xs h-64 md:h-72">
+                        <canvas id="healthTrendChart"></canvas>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2 text-center">Growing Demand for Healthy Choices</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-midnight-green">🌟 Artisanal & Gourmet Ascent</h3>
+                    <p class="text-gray-700">A rising preference for premium products made with superior ingredients, craftsmanship, and unique flavors. Authenticity and quality are key.</p>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center"><span class="icon text-sunglow-yellow">✨</span><span>High-Quality Ingredients</span></div>
+                        <div class="flex items-center"><span class="icon text-sunglow-yellow">🍞</span><span>Craftsmanship & Unique Recipes</span></div>
+                        <div class="flex items-center"><span class="icon text-sunglow-yellow">📜</span><span>Transparent Sourcing</span></div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-midnight-green">💻 Digital Disruption</h3>
+                    <p class="mb-4 text-gray-700">E-commerce, D2C brands, and quick commerce are revolutionizing accessibility and customer engagement in the bakery sector.</p>
+                     <div id="digitalDisruptionChartContainer" class="chart-container mx-auto max-w-xs h-64 md:h-72">
+                        <canvas id="digitalDisruptionChart"></canvas>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2 text-center">Online Channels Gaining Traction</p>
+                </div>
+                <div class="card p-6 lg:col-span-1">
+                    <h3 class="text-xl font-semibold mb-3 text-midnight-green">🌶️ Flavor Exploration & Innovation</h3>
+                    <p class="text-gray-700">Younger demographics, especially, are seeking novel and adventurous flavor experiences, including fusion and seasonal offerings.</p>
+                     <div class="mt-4 space-y-2">
+                        <div class="flex items-center"><span class="icon text-caribbean-green">🎉</span><span>Novel Flavor Combinations</span></div>
+                        <div class="flex items-center"><span class="icon text-caribbean-green">🌿</span><span>Seasonal & Local Ingredients</span></div>
+                        <div class="flex items-center"><span class="icon text-caribbean-green">🇮🇳</span><span>Fusion & Ethnic Twists</span></div>
+                    </div>
+                    <button id="generateFlavorIdeasBtn" class="gemini-button w-full">
+                        ✨ Generate Unique Flavor Ideas ✨
+                    </button>
+                    <div id="flavorIdeasLoader" class="loader mt-4" style="display: none;"></div>
+                </div>
+                <div class="card p-6 lg:col-span-2">
+                    <h3 class="text-xl font-semibold mb-3 text-midnight-green">📸 Visually Appealing & Sustainable Choices</h3>
+                    <p class="text-gray-700 mb-3">"Instagrammable" products drive organic buzz. Simultaneously, there's a growing demand for clean labels and sustainable practices, including eco-friendly packaging.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold text-blue-ncs mb-1">Visual Appeal:</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-600">
+                                <li>Aesthetic Product Design</li>
+                                <li>"Instagram-Perfect" Desserts</li>
+                                <li>User-Generated Content Boost</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-blue-ncs mb-1">Sustainability:</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-600">
+                                <li>Clean Label Ingredients</li>
+                                <li>Eco-Friendly Packaging</li>
+                                <li>Ethical Sourcing Concerns</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="successStories" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">Success Stories: Lessons from the Masters</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                Learning from successful bakeries provides invaluable insights. Their strategies in product differentiation, customer engagement, and operational excellence offer a blueprint for growth. Click on a story to learn more.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div id="subkoCard" class="card clickable-card p-6 flex flex-col border-l-coral-red">
+                    <h3 class="text-xl font-semibold mb-2 text-midnight-green">Subko Bakehouse</h3>
+                    <p class="text-sm text-coral-red font-semibold mb-2">Artisanal & Experiential Leader</p>
+                    <p class="text-gray-700 mb-3 grow text-sm">Fuses specialty coffee with "Subcontinental" craft bakes. Excels in design, cultural storytelling, and experiential cafes, building a strong digital community and cult following.</p>
+                    <p class="text-gray-600 text-xs"><strong>Key:</strong> Unique product fusion, digital savvy, strong brand identity. <span class="text-blue-ncs underline">Learn More...</span></p>
+                </div>
+                <div id="tbdCard" class="card clickable-card p-6 flex flex-col border-l-sunglow-yellow">
+                    <h3 class="text-xl font-semibold mb-2 text-midnight-green">The Baker's Dozen</h3>
+                    <p class="text-sm text-sunglow-yellow font-semibold mb-2">D2C & Omnichannel Trailblazer</p>
+                    <p class="text-gray-700 mb-3 grow text-sm">Champions sourdough with a robust D2C and omnichannel presence. Effective marketing, strategic funding ($9M), and product innovation drive their growth towards a ₹500 Cr target.</p>
+                    <p class="text-gray-600 text-xs"><strong>Key:</strong> Omnichannel strategy, strong brand narrative, scalable model. <span class="text-blue-ncs underline">Learn More...</span></p>
+                </div>
+                <div id="thfCard" class="card clickable-card p-6 flex flex-col border-l-caribbean-green">
+                    <h3 class="text-xl font-semibold mb-2 text-midnight-green">The Health Factory</h3>
+                    <p class="text-sm text-caribbean-green font-semibold mb-2">Health-Focused Niche Player</p>
+                    <p class="text-gray-700 mb-3 grow text-sm">Specializes in high-protein, vegan, and whole-wheat products. D2C model with subscriptions, backed by significant R&D and $3.5M seed funding, achieving high customer retention.</p>
+                    <p class="text-gray-600 text-xs"><strong>Key:</strong> Niche specialization, R&D focus, D2C subscription. <span class="text-blue-ncs underline">Learn More...</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">The Humming Tale's Recipe for Success</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                A strategic roadmap will guide The Humming Tale from concept to market leadership. Click on each pillar for detailed planning suggestions.
+            </p>
+            <div class="space-y-8">
+                <div class="md:flex md:items-stretch">
+                    <div id="roadmapPillar1" class="flowchart-step clickable-flowchart-step p-6 rounded-lg shadow-md md:w-1/2 mb-4 md:mb-0 md:mr-4 flex flex-col justify-center">
+                        <h4 class="text-xl font-semibold text-blue-ncs mb-2">1. Foundation: Brand & Positioning</h4>
+                        <p class="text-gray-700 text-sm">Define core USP, compelling brand narrative, ideal target customer, and niche specialization. Focus on authenticity and transparency.</p>
+                        <span class="text-xs text-coral-red mt-2 underline">Click for Detailed Planning</span>
+                    </div>
+                    <div class="hidden md:flex items-center flowchart-arrow mx-4">➔</div>
+                    <div id="roadmapPillar2" class="flowchart-step clickable-flowchart-step p-6 rounded-lg shadow-md md:w-1/2 flex flex-col justify-center">
+                        <h4 class="text-xl font-semibold text-blue-ncs mb-2">2. Product Excellence: Menu & Innovation</h4>
+                        <p class="text-gray-700 text-sm">Develop core offerings & signature items. Strategic ingredient sourcing. Align with trends: health, premium, unique flavors.</p>
+                        <span class="text-xs text-coral-red mt-2 underline">Click for Detailed Planning</span>
+                    </div>
+                </div>
+                 <div class="md:hidden flex justify-center flowchart-arrow my-4">⬇</div>
+                <div class="md:flex md:items-stretch mt-0 md:mt-8">
+                     <div id="roadmapPillar3" class="flowchart-step clickable-flowchart-step p-6 rounded-lg shadow-md md:w-1/2 mb-4 md:mb-0 md:mr-4 flex flex-col justify-center">
+                        <h4 class="text-xl font-semibold text-blue-ncs mb-2">3. Operational Blueprint: Model & Setup</h4>
+                        <p class="text-gray-700 text-sm">Choose optimal model (retail, cloud, online, hybrid). Invest in essential equipment & technology. Plan staffing and training.</p>
+                        <span class="text-xs text-coral-red mt-2 underline">Click for Detailed Planning</span>
+                    </div>
+                    <div class="hidden md:flex items-center flowchart-arrow mx-4">➔</div>
+                    <div id="roadmapPillar4" class="flowchart-step clickable-flowchart-step p-6 rounded-lg shadow-md md:w-1/2 flex flex-col justify-center">
+                        <h4 class="text-xl font-semibold text-blue-ncs mb-2">4. Go-to-Market: Marketing & Sales</h4>
+                        <p class="text-gray-700 text-sm">Strong digital strategy (website, social media). Effective delivery. Community building, influencer marketing, and local partnerships.</p>
+                        <span class="text-xs text-coral-red mt-2 underline">Click for Detailed Planning</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="funding" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">Funding the Dream: Bakery Startup Investment</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                Securing capital is crucial. While D2C funding landscapes evolve, Food & Beverage remains a significant sector, with emphasis on sustainable unit economics and profitability.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6 text-center">
+                    <h3 class="text-2xl font-semibold mb-3 text-midnight-green">Investor Focus</h3>
+                    <p class="text-6xl font-bold stat-value mb-2">📈</p>
+                    <p class="text-gray-700">Investors are increasingly focused on sustainable unit economics, clear paths to profitability, and scalable business models for D2C food startups.</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-4 text-midnight-green">Potential Funding Avenues</h3>
+                    <ul class="icon-list text-gray-700">
+                        <li><span class="icon">💡</span>Bootstrapping / Personal Savings</li>
+                        <li><span class="icon">🏦</span>Bank Loans & Government Schemes (Mudra, PMEGP)</li>
+                        <li><span class="icon">👼</span>Angel Investors</li>
+                        <li><span class="icon">🚀</span>Venture Capital (for scalable D2C models)</li>
+                    </ul>
+                    <p class="text-sm text-gray-600 mt-3">A meticulously prepared business plan showcasing growth potential and profitability is key.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion" class="my-12 md:my-16 scroll-mt-20">
+            <h2 class="section-title text-3xl font-bold text-center mb-4">Strategic Imperatives for The Humming Tale</h2>
+            <p class="text-lg text-center mb-10 max-w-3xl mx-auto">
+                Success in India's dynamic bakery market requires a blend of culinary artistry, strategic foresight, and operational excellence. The future favors a hybrid approach: artisanal quality with modern D2C efficiency.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-coral-red">
+                    <h4 class="text-xl font-semibold text-coral-red mb-2">1. Define & Own a Distinct Niche</h4>
+                    <p class="text-gray-700">Identify a specific niche (health, artisanal style, unique experience) with an authentic brand story that resonates with your target audience.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-sunglow-yellow">
+                    <h4 class="text-xl font-semibold text-sunglow-yellow mb-2">2. Build a Digitally-Native Brand</h4>
+                    <p class="text-gray-700">Embrace digital channels for sales, brand-building, and strong community focus. Direct customer engagement is vital.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-caribbean-green">
+                    <h4 class="text-xl font-semibold text-caribbean-green mb-2">3. Prioritize Operational Excellence</h4>
+                    <p class="text-gray-700">Ensure unwavering quality through robust sourcing, production consistency, supply chain management, and flawless delivery for scalability.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-ncs">
+                    <h4 class="text-xl font-semibold text-blue-ncs mb-2">4. Embrace Data-Driven Iteration</h4>
+                    <p class="text-gray-700">Continuously monitor sales data, customer feedback, and market trends to refine products, marketing, and operations proactively.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-midnight-green text-white text-center p-8 mt-16">
+        <p>&copy; 2024 The Humming Tale Market Insights. Crafted for strategic growth.</p>
+        <p class="text-sm opacity-75 mt-2">This infographic is based on the "Bakery Market Research and Roadmap" report.</p>
+    </footer>
+
+    <div id="flavorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeFlavorModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-midnight-green">✨ AI-Generated Flavor Ideas ✨</h3>
+            <div id="flavorIdeasLoaderModal" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="flavorIdeasContent" class="text-gray-700 space-y-4">
+                    </div>
+            </div>
+            <div id="flavorError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="subkoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeSubkoModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-coral-red">Subko Bakehouse: Artisanal Journey</h3>
+            <div class="modal-body text-gray-700 space-y-3 text-sm">
+                <p><strong>Business Model & USP:</strong> Integrates a specialty coffee roastery with a craft bakehouse, offering "Subcontinental" craft bakes. Strong focus on design, cultural storytelling, and experiential cafes. Mission to elevate Indian subcontinent's presence in global specialty coffee & craft baking.</p>
+                <p><strong>Product Philosophy:</strong> Blend of traditional "daily bread" culture and a modern, "risk-taking approach to flavor." Examples: Goan choriz & cheddar sourdough, gluten-free podi BG loaf. High-quality coffee (SCA 85+ points).</p>
+                <p><strong>Customer Experience & Marketing:</strong> Cultivated a "cult following" via strong digital engagement pre-launch. Experiential cafes with elements like pour-over bars. Design-centric digital presence, detailed storytelling (regional scripts, farmer partnerships), minimal traditional ads, focus on organic growth and community.</p>
+                <p><strong>Scaling & Key Learnings:</strong> Emphasis on authentic brand identity and unique product fusion. Leveraged digital savvy for community building. Experiential retail creates strong customer loyalty. Their success highlights the power of a niche focus combined with strong storytelling and design.</p>
+                <button id="generateSubkoSwotBtn" class="gemini-button text-sm mt-4">✨ Generate SWOT Analysis ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tbdModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeTbdModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-sunglow-yellow">The Baker's Dozen: Scaling D2C</h3>
+            <div class="modal-body text-gray-700 space-y-3 text-sm">
+                <p><strong>Business Model & Product:</strong> Omnichannel D2C chain (own stores, trade, e-commerce, Q-commerce like Instamart, Blinkit). Sourdough bread is a cornerstone; range includes cookies, cakes, snacks, premixes.</p>
+                <p><strong>Marketing & Expansion:</strong> Initial strategy: door-to-door sampling, subscription model. Leveraged Swiggy (BOGO, discounts), influencer seeding, events like "Sourdough Summit." Active social media and email marketing.</p>
+                <p><strong>Funding & Revenue:</strong> Raised $9M total; $4M Seed (Jan 2024). Reported annual revenue ₹45.4 Cr (Mar 2024). Aims for ₹500 Cr profitable startup in 5 years, potential Middle East expansion.</p>
+                <p><strong>Scaling & Key Learnings:</strong> Strong brand narrative (sourdough focus). Successful omnichannel presence. Strategic use of aggregators for initial reach. Consistent product innovation and robust marketing are key to their scalable model. Demonstrates the power of a hybrid approach (online + offline) and securing strategic funding.</p>
+                <button id="generateTbdSwotBtn" class="gemini-button text-sm mt-4">✨ Generate SWOT Analysis ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="thfModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeThfModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-caribbean-green">The Health Factory: Niche Focus</h3>
+            <div class="modal-body text-gray-700 space-y-3 text-sm">
+                <p><strong>Business Model & USP:</strong> Focus on healthy bakery products: high-protein bread, vegan bread, whole-wheat items. Tagline: "Bread Badlo Aadat Nahi." D2C model via website, Q-commerce, Amazon; offers subscriptions.</p>
+                <p><strong>Product Innovation & R&D:</strong> Significant investment in R&D (8-9 months per product formulation). Focus on scientific research into ingredient ratios and gut health. Introduced India's first protein bread.</p>
+                <p><strong>Target Audience:</strong> Mothers, gym-goers, athletes, health-conscious individuals seeking nutritious alternatives without drastic dietary changes.</p>
+                <p><strong>Funding & Growth:</strong> Secured $3.5M seed funding (Peak XV's Surge). High customer retention (>80%) via D2C and subscriptions.</p>
+                <p><strong>Scaling & Key Learnings:</strong> Success through clear niche specialization (health-focused). Strong R&D capabilities lead to product differentiation. D2C subscription model fosters customer loyalty and predictable revenue. Highlights the viability of catering to specific health-conscious consumer segments.</p>
+                <button id="generateThfSwotBtn" class="gemini-button text-sm mt-4">✨ Generate SWOT Analysis ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="roadmapPillar1Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeRoadmapPillar1Modal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-blue-ncs">Detailed Planning: Foundation - Brand & Positioning</h3>
+            <div class="modal-body text-gray-700 space-y-3">
+                <h4>Define Core USP & Compelling Brand Narrative:</h4>
+                <ul>
+                    <li>Articulate what makes The Humming Tale unique: e.g., specific baking style (ancient grains, authentic French patisserie), dedicated health focus (all-natural, allergen-free), distinctive flavor profile, ethical sourcing story, or exceptional customer experience.</li>
+                    <li>Weave your USP into an emotional and compelling brand story. Clearly communicate the "why" behind The Humming Tale.</li>
+                    <li>Emphasize authenticity and transparency in your narrative to build trust.</li>
+                </ul>
+                <h4>Pinpoint Ideal Target Customer & Niche Specialization:</h4>
+                <ul>
+                    <li>Conduct demographic profiling (age, location, income) and psychographic understanding (preferences, lifestyle, pain points, buying habits) of your ideal customer.</li>
+                    <li>Consider specializing in a niche to stand out: e.g., artisanal sourdough, decadent vegan desserts, intricate celebration cakes, healthy everyday bakes (keto, paleo), or local flavor fusions.</li>
+                    <li>Focus on deeply understanding and catering to the chosen niche to foster loyalty and word-of-mouth referrals.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="roadmapPillar2Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeRoadmapPillar2Modal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-blue-ncs">Detailed Planning: Product Excellence - Menu & Innovation</h3>
+            <div class="modal-body text-gray-700 space-y-3">
+                <h4>Develop Core Offerings, Signature Items, and New Product Pipeline:</h4>
+                <ul>
+                    <li>Create a focused core menu with "hero" or signature products that distinctly embody your brand's essence and quality.</li>
+                    <li>Establish a strategic pipeline for new product development, including seasonal specials (local fruits, festive occasions) and limited-time offers (LTOs) to maintain customer interest.</li>
+                </ul>
+                <h4>Strategic Ingredient Sourcing & Supplier Management:</h4>
+                <ul>
+                    <li>Commit to high-quality ingredients as a cornerstone. Build robust relationships with reliable suppliers.</li>
+                    <li>Explore direct sourcing from local farms or specialized vendors for unique, organic, or specialty ingredients. Make this part of your brand story.</li>
+                </ul>
+                <h4>Align with Consumer Trends:</h4>
+                <ul>
+                    <li>Incorporate health & wellness options: whole grain, multigrain, high-protein, reduced sugar, natural sweeteners, vegan, or gluten-free products.</li>
+                    <li>If positioning as premium/artisanal, emphasize craftsmanship, natural ingredients, unique recipes, and traditional techniques.</li>
+                    <li>Experiment with innovative flavor combinations, ethnic/local twists, and appealing seasonal items.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="roadmapPillar3Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeRoadmapPillar3Modal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-blue-ncs">Detailed Planning: Operational Blueprint - Model & Setup</h3>
+            <div class="modal-body text-gray-700 space-y-3">
+                <h4>Choose the Optimal Business Model:</h4>
+                <ul>
+                    <li>Evaluate Retail Storefront (traditional bakery/cafe), Cloud Kitchen (delivery-only), Online-Only (D2C/aggregators), or a Hybrid Model.</li>
+                    <li>Base the decision on available capital, target market, product line nature, and long-term growth aspirations.</li>
+                </ul>
+                <h4>Essential Infrastructure: Equipment, Technology, and Layout:</h4>
+                <ul>
+                    <li>Plan for necessary baking equipment (ovens, mixers, refrigeration). Consider leasing vs. buying initially.</li>
+                    <li>Implement right-fit technology: Point-of-Sale (POS) system, Inventory Management software, and an Online Ordering System (website/app or aggregator integration).</li>
+                    <li>Design an efficient physical layout for production workflow and, if applicable, an appealing retail display and customer service area.</li>
+                </ul>
+                <h4>Organizational Structure: Key Roles, Staffing, and Training:</h4>
+                <ul>
+                    <li>Define key roles as you grow: Head Chef/Baker, Pastry Chefs, Assistants, Counter/Sales Staff, Delivery Personnel, Marketing, Operations Manager.</li>
+                    <li>Address potential staffing challenges, such as finding and retaining skilled labor.</li>
+                    <li>Implement comprehensive training programs for product consistency, food safety (FSSAI), hygiene, equipment operation, and customer service.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="roadmapPillar4Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeRoadmapPillar4Modal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-blue-ncs">Detailed Planning: Go-to-Market - Marketing & Sales</h3>
+            <div class="modal-body text-gray-700 space-y-3">
+                <h4>Digital Strategy:</h4>
+                <ul>
+                    <li>Develop a professional, visually appealing website with high-quality product images and easy online ordering (if applicable).</li>
+                    <li>Maintain an active, engaging presence on social media (Instagram, Facebook) with enticing visuals, behind-the-scenes content, and interactive posts.</li>
+                    <li>Implement local Search Engine Optimization (SEO) to attract local customers.</li>
+                    <li>Utilize content marketing (blog posts, recipes, ingredient stories) to build authority and engage your audience.
+                        <button id="generateBlogIdeasBtn" class="gemini-button text-sm">✨ Suggest Blog Post Ideas ✨</button>
+                    </li>
+                </ul>
+                <h4>Branding & Messaging:</h4>
+                <ul>
+                    <li>Develop a strong brand identity (logo, packaging, visual style) that reflects your USP.</li>
+                    <li>Craft clear and consistent messaging across all marketing channels.
+                         <button id="generateTaglinesBtn" class="gemini-button text-sm">✨ Generate Marketing Taglines ✨</button>
+                    </li>
+                </ul>
+                <h4>Delivery Strategy:</h4>
+                <ul>
+                    <li>Evaluate using aggregator platforms (Swiggy, Zomato) for initial reach versus developing an in-house delivery system for more control, or a hybrid approach.</li>
+                    <li>Consider costs, customer experience, and access to customer data.</li>
+                </ul>
+                <h4>Community Building, Influencer Marketing & Local Partnerships:</h4>
+                <ul>
+                    <li>Foster an online community around your brand through active engagement and valuable content.</li>
+                    <li>Collaborate with local food bloggers and social media influencers whose audience aligns with yours.</li>
+                    <li>Explore partnerships with complementary local businesses (cafes, retail stores, corporate offices, event planners).</li>
+                </ul>
+                <h4>Customer Loyalty, Retention, and Feedback Mechanisms:</h4>
+                <ul>
+                    <li>Implement loyalty programs to reward repeat customers (points, discounts, exclusive offers).</li>
+                    <li>Use customer data (ethically) for personalized marketing and product recommendations.</li>
+                    <li>Actively solicit and act upon customer feedback through reviews, surveys, and direct interaction to improve products and services.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="taglineModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeTaglineModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-midnight-green">✨ AI-Generated Marketing Taglines ✨</h3>
+            <div id="taglineLoaderModal" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="taglineContent" class="text-gray-700 space-y-2">
+                    </div>
+            </div>
+            <div id="taglineError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="blogIdeaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeBlogIdeaModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-midnight-green">✨ AI-Generated Blog Post Ideas ✨</h3>
+            <div id="blogIdeaLoaderModal" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="blogIdeaContent" class="text-gray-700 space-y-4">
+                    </div>
+            </div>
+            <div id="blogIdeaError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="subkoSwotModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeSubkoSwotModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-coral-red">Subko Bakehouse: SWOT Analysis</h3>
+            <div id="subkoSwotLoader" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="subkoSwotContent" class="text-gray-700 space-y-3 text-sm swot-section">
+                    </div>
+            </div>
+            <div id="subkoSwotError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+    <div id="tbdSwotModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeTbdSwotModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-sunglow-yellow">The Baker's Dozen: SWOT Analysis</h3>
+            <div id="tbdSwotLoader" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="tbdSwotContent" class="text-gray-700 space-y-3 text-sm swot-section">
+                    </div>
+            </div>
+            <div id="tbdSwotError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+    <div id="thfSwotModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeThfSwotModal">&times;</span>
+            <h3 class="text-2xl font-semibold mb-4 text-caribbean-green">The Health Factory: SWOT Analysis</h3>
+            <div id="thfSwotLoader" class="loader" style="display: none;"></div>
+            <div class="modal-body">
+                <div id="thfSwotContent" class="text-gray-700 space-y-3 text-sm swot-section">
+                    </div>
+            </div>
+            <div id="thfSwotError" class="text-coral-red mt-3" style="display:none;"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll("nav a.nav-link");
+
+        window.onscroll = () => {
+          let current = "";
+          sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+              current = section.getAttribute("id");
+            }
+          });
+
+          navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href").includes(current)) {
+              link.classList.add("active");
+            }
+          });
+        };
+
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string') return [String(label)];
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = words[0] || '';
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + words[i].length + 1 <= maxWidth) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+            return lines.length > 0 ? lines : [label];
+        }
+
+
+        const chartTooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            if (!item || !item.chart || !item.chart.data || !item.chart.data.labels) return '';
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return String(label);
+            }
+        };
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#073B4C',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: chartTooltipTitleCallback
+                    },
+                    backgroundColor: 'rgba(7, 59, 76, 0.9)',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#FF6B6B',
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#073B4C',
+                        font: { size: 10 }
+                    },
+                    grid: { color: 'rgba(7, 59, 76, 0.1)' }
+                },
+                x: {
+                    ticks: {
+                        color: '#073B4C',
+                        font: { size: 10 },
+                        maxRotation: 45,
+                        minRotation: 0
+                    },
+                    grid: { display: false }
+                }
+            }
+        };
+
+        const commonPieDonutOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#073B4C',
+                        font: { size: 12 },
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded'
+                    }
+                },
+                tooltip: {
+                     callbacks: {
+                        title: chartTooltipTitleCallback,
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '%';
+                            }
+                            return label;
+                        }
+                    },
+                    backgroundColor: 'rgba(7, 59, 76, 0.9)',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#FF6B6B',
+                    borderWidth: 1
+                }
+            }
+        };
+
+        const marketSizeCtx = document.getElementById('marketSizeChart').getContext('2d');
+        new Chart(marketSizeCtx, {
+            type: 'line',
+            data: {
+                labels: ['2024', '2026', '2028', '2030', '2033'],
+                datasets: [{
+                    label: 'Market Size (USD Billion)',
+                    data: [13.8, 17.0, 21.0, 25.5, 31.5],
+                    borderColor: '#FF6B6B',
+                    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                scales: {
+                    y: { ...commonChartOptions.scales.y, title: { display: true, text: 'USD Billion', color: '#073B4C'} },
+                    x: { ...commonChartOptions.scales.x }
+                }
+            }
+        });
+        document.getElementById('currentMarketSizeHero').textContent = "13.8";
+
+        const healthTrendCtx = document.getElementById('healthTrendChart').getContext('2d');
+        const healthLabels = [
+            wrapLabels('Organic Options', 16),
+            wrapLabels('Gluten-Free', 16),
+            wrapLabels('High Protein', 16),
+            wrapLabels('Vegan Choices', 16),
+            wrapLabels('Low Sugar', 16)
+        ];
+        new Chart(healthTrendCtx, {
+            type: 'doughnut',
+            data: {
+                labels: healthLabels,
+                datasets: [{
+                    label: 'Demand for Healthy Choices',
+                    data: [25, 20, 22, 18, 15],
+                    backgroundColor: ['#06D6A0', '#FFD166', '#118AB2', '#FF6B6B', '#4ECDC4'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: commonPieDonutOptions
+        });
+
+        const digitalDisruptionCtx = document.getElementById('digitalDisruptionChart').getContext('2d');
+        const digitalLabels = [
+            wrapLabels('Online Sales Growth YoY', 16),
+            wrapLabels('D2C Brand Adoption', 16),
+            wrapLabels('Quick Commerce Penetration', 16)
+        ];
+        new Chart(digitalDisruptionCtx, {
+            type: 'bar',
+            data: {
+                labels: digitalLabels,
+                datasets: [{
+                    label: 'Growth/Adoption Rate (%)',
+                    data: [15, 25, 18],
+                    backgroundColor: ['#118AB2', '#06D6A0', '#FFD166'],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                 indexAxis: 'y',
+                 scales: {
+                    y: { ...commonChartOptions.scales.y, ticks: { ...commonChartOptions.scales.y.ticks, autoSkip: false } },
+                    x: { ...commonChartOptions.scales.x, title: { display: true, text: 'Percentage (%)', color: '#073B4C'} }
+                },
+                plugins: {
+                    ...commonChartOptions.plugins,
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const generateFlavorBtn = document.getElementById('generateFlavorIdeasBtn');
+        const flavorModal = document.getElementById('flavorModal');
+        const closeFlavorModalBtn = document.getElementById('closeFlavorModal');
+        const flavorIdeasContent = document.getElementById('flavorIdeasContent');
+        const flavorLoaderCard = document.getElementById('flavorIdeasLoader');
+        const flavorLoaderModal = document.getElementById('flavorIdeasLoaderModal');
+        const flavorErrorDiv = document.getElementById('flavorError');
+
+        async function callGeminiAPI(prompt, contentElement, loaderElement, errorElement, isSwot = false) {
+            contentElement.innerHTML = '';
+            errorElement.style.display = 'none';
+            loaderElement.style.display = 'block';
+
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} ${response.statusText}. Details: ${JSON.stringify(errorData)}`);
+                }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    let text = result.candidates[0].content.parts[0].text;
+
+                    if (isSwot) {
+                        text = text.replace(/\*\*(Strengths|Weaknesses|Opportunities|Threats):\*\*/g, '<h5>$1:</h5><ul>')
+                                   .replace(/\* (.*?)(?=\n\*|\n\n|$)/g, '<li>$1</li>') // More robust list item conversion
+                                   .replace(/<\/li>(\n?)<\/ul>/g, '</li></ul>$1') // Ensure correct ul closing
+                                   .replace(/\n/g, ''); // Remove remaining newlines after list conversion
+
+                        // If a heading has no list items under it, it might leave an empty <ul>. This attempts to clean it.
+                        text = text.replace(/<h5>(.*?)<\/h5><ul><\/ul>/g, '<h5>$1</h5><p class="text-sm italic mt-1">No specific points generated for this section.</p>');
+                        // Ensure all lists are closed if any were opened
+                        if (text.includes('<ul>') && !text.endsWith('</ul>')) {
+                           text += '</ul>'; // Close dangling list
+                        }
+
+
+                    } else {
+                         text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                         text = text.replace(/\n/g, '<br>');
+                    }
+                    contentElement.innerHTML = text;
+                } else {
+                    console.error('Unexpected API response structure:', result);
+                    contentElement.innerHTML = '<p>Could not retrieve ideas at this time. The response was not in the expected format.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching from Gemini API:', error);
+                errorElement.textContent = 'Failed to generate content. Please try again later. Details: ' + error.message;
+                errorElement.style.display = 'block';
+                contentElement.innerHTML = '<p>We encountered an issue. Please check your connection or try again shortly.</p>';
+            } finally {
+                loaderElement.style.display = 'none';
+            }
+        }
+
+        if(generateFlavorBtn) {
+            generateFlavorBtn.addEventListener('click', () => {
+                flavorModal.style.display = 'block';
+                const prompt = "Generate 3 unique and trending flavor combinations for artisanal bakery items, specifically for 'The Humming Tale', a pre-order bakery in Kolkata. These should appeal to a modern, urban Indian audience. For each combination, provide a catchy name (as a bold heading) and a brief, enticing description (1-2 sentences). Format the output clearly for easy reading.";
+                callGeminiAPI(prompt, flavorIdeasContent, flavorLoaderModal, flavorErrorDiv);
+            });
+        }
+
+        if(closeFlavorModalBtn) {
+            closeFlavorModalBtn.onclick = function() {
+                flavorModal.style.display = "none";
+            }
+        }
+
+
+        // Success Story Modals Logic
+        const subkoCard = document.getElementById('subkoCard');
+        const tbdCard = document.getElementById('tbdCard');
+        const thfCard = document.getElementById('thfCard');
+
+        const subkoModal = document.getElementById('subkoModal');
+        const tbdModal = document.getElementById('tbdModal');
+        const thfModal = document.getElementById('thfModal');
+
+        const closeSubkoModalBtn = document.getElementById('closeSubkoModal');
+        const closeTbdModalBtn = document.getElementById('closeTbdModal');
+        const closeThfModalBtn = document.getElementById('closeThfModal');
+
+        subkoCard.addEventListener('click', () => subkoModal.style.display = 'block');
+        tbdCard.addEventListener('click', () => tbdModal.style.display = 'block');
+        thfCard.addEventListener('click', () => thfModal.style.display = 'block');
+
+        closeSubkoModalBtn.onclick = () => subkoModal.style.display = 'none';
+        closeTbdModalBtn.onclick = () => tbdModal.style.display = 'none';
+        closeThfModalBtn.onclick = () => thfModal.style.display = 'none';
+
+        // Roadmap Pillar Modals Logic
+        const roadmapPillar1 = document.getElementById('roadmapPillar1');
+        const roadmapPillar2 = document.getElementById('roadmapPillar2');
+        const roadmapPillar3 = document.getElementById('roadmapPillar3');
+        const roadmapPillar4 = document.getElementById('roadmapPillar4');
+
+        const roadmapPillar1Modal = document.getElementById('roadmapPillar1Modal');
+        const roadmapPillar2Modal = document.getElementById('roadmapPillar2Modal');
+        const roadmapPillar3Modal = document.getElementById('roadmapPillar3Modal');
+        const roadmapPillar4Modal = document.getElementById('roadmapPillar4Modal');
+
+        const closeRoadmapPillar1ModalBtn = document.getElementById('closeRoadmapPillar1Modal');
+        const closeRoadmapPillar2ModalBtn = document.getElementById('closeRoadmapPillar2Modal');
+        const closeRoadmapPillar3ModalBtn = document.getElementById('closeRoadmapPillar3Modal');
+        const closeRoadmapPillar4ModalBtn = document.getElementById('closeRoadmapPillar4Modal');
+
+        roadmapPillar1.addEventListener('click', () => roadmapPillar1Modal.style.display = 'block');
+        roadmapPillar2.addEventListener('click', () => roadmapPillar2Modal.style.display = 'block');
+        roadmapPillar3.addEventListener('click', () => roadmapPillar3Modal.style.display = 'block');
+        roadmapPillar4.addEventListener('click', () => roadmapPillar4Modal.style.display = 'block');
+
+        closeRoadmapPillar1ModalBtn.onclick = () => roadmapPillar1Modal.style.display = 'none';
+        closeRoadmapPillar2ModalBtn.onclick = () => roadmapPillar2Modal.style.display = 'none';
+        closeRoadmapPillar3ModalBtn.onclick = () => roadmapPillar3Modal.style.display = 'none';
+        closeRoadmapPillar4ModalBtn.onclick = () => roadmapPillar4Modal.style.display = 'none';
+
+        // New Gemini API Features: Taglines & Blog Ideas
+        const generateTaglinesBtn = document.getElementById('generateTaglinesBtn');
+        const taglineModal = document.getElementById('taglineModal');
+        const closeTaglineModalBtn = document.getElementById('closeTaglineModal');
+        const taglineContent = document.getElementById('taglineContent');
+        const taglineLoaderModal = document.getElementById('taglineLoaderModal');
+        const taglineErrorDiv = document.getElementById('taglineError');
+
+        const generateBlogIdeasBtn = document.getElementById('generateBlogIdeasBtn');
+        const blogIdeaModal = document.getElementById('blogIdeaModal');
+        const closeBlogIdeaModalBtn = document.getElementById('closeBlogIdeaModal');
+        const blogIdeaContent = document.getElementById('blogIdeaContent');
+        const blogIdeaLoaderModal = document.getElementById('blogIdeaLoaderModal');
+        const blogIdeaErrorDiv = document.getElementById('blogIdeaError');
+
+        if(generateTaglinesBtn) {
+            generateTaglinesBtn.addEventListener('click', () => {
+                taglineModal.style.display = 'block';
+                const prompt = "Generate 5 catchy and relevant marketing taglines for a pre-order bakery in Kolkata called 'The Humming Tale', focusing on its artisanal quality, handcrafted offerings, and the joy of unique bakes.";
+                callGeminiAPI(prompt, taglineContent, taglineLoaderModal, taglineErrorDiv);
+            });
+        }
+        if(closeTaglineModalBtn) {
+            closeTaglineModalBtn.onclick = () => taglineModal.style.display = 'none';
+        }
+
+        if(generateBlogIdeasBtn) {
+            generateBlogIdeasBtn.addEventListener('click', () => {
+                blogIdeaModal.style.display = 'block';
+                const prompt = "Suggest 5 engaging blog post titles and a brief (1-sentence) description for each, suitable for marketing 'The Humming Tale', a pre-order artisanal bakery in Kolkata. Topics should revolve around baking craftsmanship, unique ingredients, Kolkata's culinary heritage, and the delight of handcrafted goods. Format each as a bold title followed by its description.";
+                callGeminiAPI(prompt, blogIdeaContent, blogIdeaLoaderModal, blogIdeaErrorDiv);
+            });
+        }
+        if(closeBlogIdeaModalBtn) {
+            closeBlogIdeaModalBtn.onclick = () => blogIdeaModal.style.display = 'none';
+        }
+
+        // SWOT Analysis Feature
+        const generateSubkoSwotBtn = document.getElementById('generateSubkoSwotBtn');
+        const subkoSwotModal = document.getElementById('subkoSwotModal');
+        const closeSubkoSwotModalBtn = document.getElementById('closeSubkoSwotModal');
+        const subkoSwotContent = document.getElementById('subkoSwotContent');
+        const subkoSwotLoader = document.getElementById('subkoSwotLoader');
+        const subkoSwotError = document.getElementById('subkoSwotError');
+
+        const generateTbdSwotBtn = document.getElementById('generateTbdSwotBtn');
+        const tbdSwotModal = document.getElementById('tbdSwotModal');
+        const closeTbdSwotModalBtn = document.getElementById('closeTbdSwotModal');
+        const tbdSwotContent = document.getElementById('tbdSwotContent');
+        const tbdSwotLoader = document.getElementById('tbdSwotLoader');
+        const tbdSwotError = document.getElementById('tbdSwotError');
+
+        const generateThfSwotBtn = document.getElementById('generateThfSwotBtn');
+        const thfSwotModal = document.getElementById('thfSwotModal');
+        const closeThfSwotModalBtn = document.getElementById('closeThfSwotModal');
+        const thfSwotContent = document.getElementById('thfSwotContent');
+        const thfSwotLoader = document.getElementById('thfSwotLoader');
+        const thfSwotError = document.getElementById('thfSwotError');
+
+        if (generateSubkoSwotBtn) {
+            generateSubkoSwotBtn.addEventListener('click', () => {
+                subkoSwotModal.style.display = 'block';
+                const prompt = "Generate a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats) for Subko Bakehouse, focusing on its artisanal coffee and bakehouse model, strong design, cultural storytelling, and experiential cafes. Base this on typical characteristics of such a business and its known strategies. Format each section (Strengths, Weaknesses, etc.) as a bold heading (e.g., **Strengths:**) followed by bullet points (e.g., * Strong brand identity).";
+                callGeminiAPI(prompt, subkoSwotContent, subkoSwotLoader, subkoSwotError, true);
+            });
+        }
+        if(closeSubkoSwotModalBtn) closeSubkoSwotModalBtn.onclick = () => subkoSwotModal.style.display = 'none';
+
+        if (generateTbdSwotBtn) {
+            generateTbdSwotBtn.addEventListener('click', () => {
+                tbdSwotModal.style.display = 'block';
+                const prompt = "Generate a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats) for The Baker's Dozen, focusing on its D2C omnichannel model, sourdough specialization, marketing strategies, and expansion plans. Base this on typical characteristics of such a business and its known strategies. Format each section (Strengths, Weaknesses, etc.) as a bold heading (e.g., **Strengths:**) followed by bullet points (e.g., * Strong brand identity).";
+                callGeminiAPI(prompt, tbdSwotContent, tbdSwotLoader, tbdSwotError, true);
+            });
+        }
+        if(closeTbdSwotModalBtn) closeTbdSwotModalBtn.onclick = () => tbdSwotModal.style.display = 'none';
+
+        if (generateThfSwotBtn) {
+            generateThfSwotBtn.addEventListener('click', () => {
+                thfSwotModal.style.display = 'block';
+                const prompt = "Generate a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats) for The Health Factory, focusing on its health-oriented product line (high-protein, vegan), D2C model with subscriptions, and R&D focus. Base this on typical characteristics of such a business and its known strategies. Format each section (Strengths, Weaknesses, etc.) as a bold heading (e.g., **Strengths:**) followed by bullet points (e.g., * Strong brand identity).";
+                callGeminiAPI(prompt, thfSwotContent, thfSwotLoader, thfSwotError, true);
+            });
+        }
+        if(closeThfSwotModalBtn) closeThfSwotModalBtn.onclick = () => thfSwotModal.style.display = 'none';
+
+
+        window.onclick = function(event) {
+            const modals = [
+                flavorModal, subkoModal, tbdModal, thfModal,
+                roadmapPillar1Modal, roadmapPillar2Modal, roadmapPillar3Modal, roadmapPillar4Modal,
+                taglineModal, blogIdeaModal,
+                subkoSwotModal, tbdSwotModal, thfSwotModal
+            ];
+            modals.forEach(modal => {
+                if (modal && event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
